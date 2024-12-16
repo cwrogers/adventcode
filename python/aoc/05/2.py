@@ -4,26 +4,58 @@ with open("input.txt", "r") as file:
     lines = file.read().strip().split('\n')
 
 
-def isSafe(l):
-    di = 0
-    prev = l[0]
-    for i in range(1, len(l)):
-        dif = l[i] - prev
-        if dif == 0:
-            return False
-        aDif = abs(dif)
-        nDif = (dif / aDif) 
-        if aDif > 3 or (di != 0 and nDif != di):
-            return False
-        di = nDif
-        prev = l[i]
+def checkRule(l, rules):
+    for n in l:
+        if n in rules:
+            matched = list(set(rules[n]) & set(l))
+            for r in matched:
+                ni = l.index(n)
+                rni = l.index(r)
+                if not ni < rni:
+                    return False
     return True
 
 
-num_safe = 0
-for line in lines:
-    s = list(map(lambda x: int(x), list(filter(None, line.strip().split(' ')))))
-    if any(isSafe(s[:l] + s[l+1:]) for l in range(len(s))):
-        num_safe += 1
 
-print(num_safe)
+def fixRules(l, rules):
+    ok = l.copy()
+    for n in ok:
+        if n in rules:
+            matched = list(set(rules[n]) & set(ok))
+            for r in matched:
+                ni = ok.index(n)
+                rni = ok.index(r)
+                if not ni < rni:
+                    p = ok.pop(ni)
+                    ok.insert( 0 if rni == 0 else rni-1, p)
+    return ok
+
+
+
+
+rules = {}
+rrules = True
+sum = 0
+for line in lines:
+    if len(line.strip()) == 0:
+        rrules = False
+        continue
+
+    if rrules:
+        r = line.split('|')
+        if r[0] in rules:
+            rules[r[0]] += [r[1]]
+        else:
+            rules[r[0]] = [r[1]]
+        continue
+
+    l = line.split(',')
+    ok = l.copy()
+
+    if not checkRule(ok, rules):
+        while not checkRule(ok, rules):
+            ok = fixRules(ok, rules)
+        sum += int(ok[len(ok) // 2])
+
+print(sum)
+
