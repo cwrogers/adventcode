@@ -5,11 +5,11 @@ with open("input.txt", "r") as file:
 
 cache = {}
 
-def doRules(d, n, e):
+def doRules(d, e):
     r = []
-    if (d,n) in cache:
-        return cache[(d,n)]
-    if n == e:
+    if (d,e) in cache:
+        return cache[(d,e)]
+    if e == 0:
         return 1
     if d == 0:
         r =  [1]
@@ -22,15 +22,14 @@ def doRules(d, n, e):
         r = [d * 2024]
     c = 0
     for item in r:
-        c += doRules(item, n+1, e)
-    cache[(d, n)] = c
+        c += doRules(item, e - 1)
+    cache[(d, e)] = c
     return c
 
 
 rules = line
 sum = 0
 for i in rules:
-    sum += doRules(i, 0, 75)
-
+    sum += doRules(i, 75)
 
 print(sum)
