@@ -36,52 +36,49 @@ for i in range(len(s)):
 
 front = 0
 end = len(rs) - 1
+   
 
-traversed_no_change = False
-while not traversed_no_change:
-    traversed_no_change = True
-    if end == 0 and not traversed_no_change:
-            end = len(rs)
-            traversed_no_change = True
-        
-    while end >= 0: 
-        while type(rs[end]) is not dig or front >= len(rs) - 1:
-            end -= 1
-            front = 0
-            continue
-        while type(rs[front]) is not space:
+while end >= 0: 
+    while type(rs[end]) is not dig or front >= len(rs) - 1:
+        end -= 1
+        front = 0
+        continue
+    while type(rs[front]) is not space:
+        front += 1
+        continue
+    if type(rs[front]) is space:
+        size = rs[front].size
+        num = rs[end]
+        if num.size > size or front > end:
             front += 1
             continue
-        if type(rs[front]) is space:
-            size = rs[front].size
-            num = rs[end]
-            if num.size > size or front > end:
-                front += 1
-                continue
-            traversed_no_change = False
-            dif = size - num.size
-            val = rs.pop(end)
-            rs.insert(front, val)
-            if dif == 0:
-                rs.pop(front+1)
-            else:
-                rs[front+1].size = dif
-                offset = dif
-                for i in range(dif):
-                    offset += rs[front + 1 + i].size
-                front += offset
-            rs.insert(end, space(num.size))
-            end -= 1
-            #print(''.join([str(x) for x in rs]))
+        dif = size - num.size
+        val = rs.pop(end)
+        rs.insert(front, val)
+        if dif == 0:
+            rs.pop(front+1)
+        else:
+            rs[front+1].size = dif
+            offset = dif
+            for i in range(dif):
+                offset += rs[front + 1 + i].size
+            front += offset
+        rs.insert(end, space(num.size))
+        end -= 1
+        #print(''.join([str(x) for x in rs]))
 
-
-rs = ''.join([str(x) for x in rs])
+ss = []
+for x in rs:
+    if type(x) is dig:
+        ss += [x.id] * x.size
+    elif type(x) is space:
+        ss += ['.'] * x.size
 
 cs = 0
 
-for i in range(len(rs)):
-    if rs[i] == '.':
+for i in range(len(ss)):
+    if ss[i] == '.':
         continue
-    cs += i * int(rs[i])
+    cs += i * int(ss[i])
 
 print(cs)
